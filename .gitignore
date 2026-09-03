@@ -1,0 +1,32 @@
+# .NET build output
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio and JetBrains user/workspace files
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+*.sln.iml
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Test output and coverage reports
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Local-only files
+.env
+.env.*
+*.log
+
+# Operating-system metadata
+Thumbs.db
+Desktop.ini

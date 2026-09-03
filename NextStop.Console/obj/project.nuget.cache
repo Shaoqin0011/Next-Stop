@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "EvKN3ZLNdhI=",
+  "success": true,
+  "projectFilePath": "E:\\Projects\\Next-Stop\\NextStop.Console\\NextStop.Console.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Administrator\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

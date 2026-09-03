@@ -1,0 +1,146 @@
+<Window x:Class="NextStop.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Next Stop — Option Pricer"
+        Width="1120" Height="800" MinWidth="900" MinHeight="680"
+        Background="{StaticResource AppBackground}">
+    <Grid Margin="42,32">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="28" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+
+        <Grid>
+            <StackPanel>
+                <TextBlock FontSize="26" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}">Next Stop</TextBlock>
+                <TextBlock Margin="0,5,0,0" FontSize="14" Foreground="{StaticResource TextSecondary}">Manual-input option pricer</TextBlock>
+            </StackPanel>
+            <Border HorizontalAlignment="Right" VerticalAlignment="Center" Padding="12,7" Background="#EAF2FF" CornerRadius="4">
+                <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource Accent}">Local calculations only</TextBlock>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="1.25*" /><ColumnDefinition Width="28" /><ColumnDefinition Width="0.75*" /></Grid.ColumnDefinitions>
+
+            <Border Padding="28" Background="{StaticResource Surface}" BorderBrush="{StaticResource Border}" BorderThickness="1" CornerRadius="6">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <StackPanel>
+                            <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}">Inputs</TextBlock>
+                            <TextBlock Margin="0,4,0,0" FontSize="13" Foreground="{StaticResource TextSecondary}">Configure the engine, contract, and market assumptions.</TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,24,0,0">
+                            <TextBlock Style="{StaticResource SectionTitle}">1. Engine settings</TextBlock>
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource FieldLabel}">PRICING ENGINE</TextBlock>
+                                    <ComboBox Margin="0,7,0,0" ItemsSource="{Binding PricingEngines}" SelectedItem="{Binding SelectedPricingEngine}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Visibility="{Binding IsMonteCarlo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Style="{StaticResource FieldLabel}">SIMULATION PATHS</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding NumberOfPathsText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource HintText}">Fixed seed: 42</TextBlock>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4" Visibility="{Binding IsMonteCarlo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Style="{StaticResource FieldLabel}">TIME STEPS</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding NumberOfTimeStepsText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource HintText}">Per simulated path</TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                        <Separator Margin="0,24" />
+
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}">2. Option &amp; underlying</TextBlock>
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="18" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource FieldLabel}">EXERCISE STYLE</TextBlock>
+                                    <ComboBox Margin="0,7,0,0" ItemsSource="{Binding ExerciseStyles}" SelectedItem="{Binding SelectedExerciseStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">OPTION TYPE</TextBlock>
+                                    <ComboBox Margin="0,7,0,0" ItemsSource="{Binding OptionTypes}" SelectedItem="{Binding SelectedOptionType}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Style="{StaticResource FieldLabel}">TIME TO MATURITY</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding TimeToMaturityText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource HintText}">Years</TextBlock>
+                                </StackPanel>
+                                <StackPanel Grid.Row="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">SPOT PRICE</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding SpotText, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">STRIKE PRICE</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding StrikeText, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                        <Separator Margin="0,24" />
+
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}">3. Market fundamentals</TextBlock>
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource FieldLabel}">VOLATILITY</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding VolatilityPercentText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource HintText}">Percent per annum</TextBlock>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">RISK-FREE RATE</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding RiskFreeRatePercentText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource HintText}">Percent per annum</TextBlock>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Style="{StaticResource FieldLabel}">DIVIDEND YIELD</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding DividendYieldPercentText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource HintText}">Percent per annum</TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                        <TextBlock MinHeight="18" Margin="0,24,0,10" Foreground="#B42318" FontSize="12" Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource PrimaryButton}" Command="{Binding PriceCommand}">Calculate price</Button>
+                            <Button Margin="10,0,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding ResetCommand}">Reset</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <Border Grid.Column="2" Padding="28" Background="{StaticResource Surface}" BorderBrush="{StaticResource Border}" BorderThickness="1" CornerRadius="6">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="28" /><RowDefinition Height="Auto" /><RowDefinition Height="34" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                    <StackPanel>
+                        <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}">Model result</TextBlock>
+                        <TextBlock Margin="0,4,0,0" FontSize="13" Foreground="{StaticResource TextSecondary}" Text="{Binding ResultDescription}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Border Grid.Row="2" Padding="20" Background="#F5F9FF" CornerRadius="5">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource FieldLabel}">THEORETICAL VALUE</TextBlock>
+                            <TextBlock Margin="0,5,0,0" FontSize="32" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Text="{Binding PriceDisplay}" />
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Grid.Row="4" Style="{StaticResource FieldLabel}">GREEKS</TextBlock>
+                    <Grid Grid.Row="5" Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="18" /><RowDefinition Height="Auto" /><RowDefinition Height="18" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                        <StackPanel><TextBlock Style="{StaticResource GreekName}">Delta</TextBlock><TextBlock Style="{StaticResource GreekValue}" Text="{Binding DeltaDisplay}" /></StackPanel>
+                        <StackPanel Grid.Column="1"><TextBlock Style="{StaticResource GreekName}">Gamma</TextBlock><TextBlock Style="{StaticResource GreekValue}" Text="{Binding GammaDisplay}" /></StackPanel>
+                        <StackPanel Grid.Row="2"><TextBlock Style="{StaticResource GreekName}">Theta</TextBlock><TextBlock Style="{StaticResource GreekValue}" Text="{Binding ThetaDisplay}" /></StackPanel>
+                        <StackPanel Grid.Row="2" Grid.Column="1"><TextBlock Style="{StaticResource GreekName}">Vega</TextBlock><TextBlock Style="{StaticResource GreekValue}" Text="{Binding VegaDisplay}" /></StackPanel>
+                        <StackPanel Grid.Row="4"><TextBlock Style="{StaticResource GreekName}">Rho</TextBlock><TextBlock Style="{StaticResource GreekValue}" Text="{Binding RhoDisplay}" /></StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

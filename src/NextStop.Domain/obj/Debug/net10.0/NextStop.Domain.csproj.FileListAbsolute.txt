@@ -1,0 +1,11 @@
+E:\Projects\Next-Stop\src\NextStop.Domain\bin\Debug\net10.0\NextStop.Domain.deps.json
+E:\Projects\Next-Stop\src\NextStop.Domain\bin\Debug\net10.0\NextStop.Domain.dll
+E:\Projects\Next-Stop\src\NextStop.Domain\bin\Debug\net10.0\NextStop.Domain.pdb
+E:\Projects\Next-Stop\src\NextStop.Domain\obj\Debug\net10.0\NextStop.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\Next-Stop\src\NextStop.Domain\obj\Debug\net10.0\NextStop.Domain.AssemblyInfoInputs.cache
+E:\Projects\Next-Stop\src\NextStop.Domain\obj\Debug\net10.0\NextStop.Domain.AssemblyInfo.cs
+E:\Projects\Next-Stop\src\NextStop.Domain\obj\Debug\net10.0\NextStop.Domain.csproj.CoreCompileInputs.cache
+E:\Projects\Next-Stop\src\NextStop.Domain\obj\Debug\net10.0\NextStop.Domain.dll
+E:\Projects\Next-Stop\src\NextStop.Domain\obj\Debug\net10.0\refint\NextStop.Domain.dll
+E:\Projects\Next-Stop\src\NextStop.Domain\obj\Debug\net10.0\NextStop.Domain.pdb
+E:\Projects\Next-Stop\src\NextStop.Domain\obj\Debug\net10.0\ref\NextStop.Domain.dll

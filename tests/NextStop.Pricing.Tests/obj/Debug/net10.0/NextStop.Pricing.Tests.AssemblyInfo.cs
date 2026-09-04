@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NextStop.Pricing.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c95b374c5783ba13ac097229f9ed3f9223733f50")]
 [assembly: System.Reflection.AssemblyProductAttribute("NextStop.Pricing.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NextStop.Pricing.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

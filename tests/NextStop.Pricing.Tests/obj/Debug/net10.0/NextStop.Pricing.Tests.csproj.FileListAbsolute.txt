@@ -101,3 +101,4 @@ E:\Projects\Next-Stop\tests\NextStop.Pricing.Tests\obj\Debug\net10.0\refint\Next
 E:\Projects\Next-Stop\tests\NextStop.Pricing.Tests\obj\Debug\net10.0\NextStop.Pricing.Tests.pdb
 e:\Projects\Next-Stop\tests\NextStop.Pricing.Tests\obj\Debug\net10.0\NextStop.Pricing.Tests.genruntimeconfig.cache
 e:\Projects\Next-Stop\tests\NextStop.Pricing.Tests\obj\Debug\net10.0\ref\NextStop.Pricing.Tests.dll
+E:\Projects\Next-Stop\tests\NextStop.Pricing.Tests\obj\Debug\net10.0\NextStop.Pricing.Tests.sourcelink.json

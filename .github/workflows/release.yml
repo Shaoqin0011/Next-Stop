@@ -1,0 +1,49 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+  workflow_dispatch:
+
+jobs:
+  build-test-publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore NextStop.slnx
+
+      - name: Build
+        run: dotnet build NextStop.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test NextStop.slnx --configuration Release --no-build
+
+      - name: Publish WPF application
+        run: >
+          dotnet publish
+          .\src\NextStop.Wpf\NextStop.Wpf.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained false
+          --output .\publish
+
+      - name: Create release archive
+        shell: pwsh
+        run: Compress-Archive -Path .\publish\* -DestinationPath .\NextStop-win-x64.zip
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NextStop-win-x64
+          path: NextStop-win-x64.zip

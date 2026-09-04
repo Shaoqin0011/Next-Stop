@@ -34,6 +34,37 @@ Use **Path** whenever early exercise needs to be considered. This includes Ameri
 
 For European options, including those with a continuous dividend yield, Black–Scholes and both Monte Carlo methods are available because exercise occurs only at maturity.
 
+## Example: AAPL American call
+
+The following example uses an AAPL American call from a market snapshot taken on September 4, 2026. The contract had a strike of `325` and expired on September 16, 2026.
+
+The market inputs were entered into Next Stop and priced with the Monte Carlo Path method:
+
+| Input | Value |
+| --- | ---: |
+| AAPL spot price | 320.64 |
+| Strike price | 325.00 |
+| Implied volatility | 25.15% |
+| Risk-free rate | 3.83% |
+| Dividend yield | 0.33% |
+| Simulation paths | 10,000 |
+| Time steps | 100 |
+
+![AAPL American call priced in Next Stop](img/nextStop_usecase_v0.4.1_Screenshot.png)
+
+Next Stop produced a theoretical value of **4.2638**. In the captured options chain, the same contract had a bid of `4.20`, an ask of `4.30`, a midpoint of `4.25`, and a last price of `4.30`.
+
+| Comparison | Difference |
+| --- | ---: |
+| Model vs. midpoint | +0.0138 (+0.32%) |
+| Model vs. last price | -0.0362 (-0.84%) |
+
+The model value was inside the quoted bid–ask spread and close to both the midpoint and the last traded price.
+
+![AAPL option market snapshot in moomoo](img/futuMooMoo_AAPL_option_price_Screenshot.png)
+
+> The options chain shown here contains delayed quotes. This is an illustrative comparison, not a guarantee that a model price will match a future market price.
+
 ## Technology
 
 - C# and .NET 10

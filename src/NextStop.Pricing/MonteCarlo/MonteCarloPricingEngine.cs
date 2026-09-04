@@ -1,9 +1,9 @@
 using NextStop.Domain.Instruments;
 using NextStop.Domain.Market;
 using NextStop.Pricing.MonteCarlo.Random;
+using NextStop.Pricing.MonteCarlo.Regression;
 using NextStop.Pricing.MonteCarlo.Simulation;
 using NextStop.Pricing.MonteCarlo.Setting;
-using MathNet.Numerics.LinearRegression;
 
 public sealed class MonteCarloPricingEngine
 {
@@ -65,6 +65,7 @@ public sealed class MonteCarloPricingEngine
         int numberOfSteps = settings.NumberOfTimeSteps;
         var randomGenerator = new GaussianRandomGenerator(settings.RandomSeed);
         var pathSimulator = new GeometricBrownianMotionPathSimulator();
+        var continuationValueRegressor = new ContinuationValueRegressor();
         double[][] paths = new double[numberOfPaths][];
 
         double r = market.RiskFreeRate;
@@ -105,17 +106,17 @@ public sealed class MonteCarloPricingEngine
             if (i == numberOfSteps) continue;
 
             // Longstaff-Schwartz regression for continuation value estimation
-            var regressionXs = new List<double[]>();
-            var regressionYs = new List<double>();
+            var regressionSpots = new List<double>();
+            var regressionContinuationValues = new List<double>();
             for (int j = 0; j < spots.Length; j++)
             {
                 double spot = spots[j];
                 if (!option.IsInTheMoney(spot)) continue;
                 
-                regressionXs.Add([1.0, spot, spot * spot]);
-                regressionYs.Add(expectedContinuationValues[j]);
+                regressionSpots.Add(spot);
+                regressionContinuationValues.Add(expectedContinuationValues[j]);
             }
-            if (regressionXs.Count < 3)
+            if (regressionSpots.Count < ContinuationValueRegressor.BasisFunctionCount)
             {
                 for (int j = 0; j < spots.Length; j++)
                 {
@@ -124,9 +125,7 @@ public sealed class MonteCarloPricingEngine
 
                 continue;
             }
-            double[] beta = MultipleRegression.NormalEquations([.. regressionXs], 
-                                                               [.. regressionYs], 
-                                                               intercept: false);
+            QuadraticRegressionModel regression = continuationValueRegressor.Fit(regressionSpots, regressionContinuationValues);
 
             for (int j = 0; j < spots.Length; j++)
             {
@@ -137,7 +136,7 @@ public sealed class MonteCarloPricingEngine
                     continue;
                 }
                 
-                double continuationValue = beta[0] + beta[1] * spot + beta[2] * spot * spot;
+                double continuationValue = regression.Predict(spot);
                 if (immediateExerciseValues[j] > continuationValue)
                 {
                     optimalMovementValues[j] = immediateExerciseValues[j];

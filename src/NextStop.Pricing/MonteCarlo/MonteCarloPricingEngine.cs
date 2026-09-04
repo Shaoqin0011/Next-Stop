@@ -150,8 +150,10 @@ public sealed class MonteCarloPricingEngine
         }
 
         double averageOptimalValue = optimalMovementValues.Sum() / optimalMovementValues.Length;
+        double continuationValueAtValuation = averageOptimalValue * stepDiscountTerm;
+        double intrinsicValueAtValuation = option.Payoff(market.Spot);
 
-        return averageOptimalValue * stepDiscountTerm;
+        return Math.Max(continuationValueAtValuation, intrinsicValueAtValuation);
     }
 }
 

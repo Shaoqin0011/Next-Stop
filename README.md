@@ -63,8 +63,6 @@ The model value was inside the quoted bid–ask spread and close to both the mid
 
 ![AAPL option market snapshot in moomoo](img/futuMooMoo_AAPL_option_price_Screenshot.png)
 
-> The options chain shown here contains delayed quotes. This is an illustrative comparison, not a guarantee that a model price will match a future market price.
-
 ## Technology
 
 - C# and .NET 10
@@ -78,8 +76,6 @@ The model value was inside the quoted bid–ask spread and close to both the mid
 ### Download a release
 
 On Windows with the .NET 10 Desktop Runtime installed, download the latest `NextStop-win-x64.zip` package from [GitHub Releases](https://github.com/Shaoqin0011/Next-Stop/releases), extract it, and run `NextStop.Wpf.exe`.
-
-> Release packages become available on the Releases page after a GitHub Release is published.
 
 ### Run from source
 

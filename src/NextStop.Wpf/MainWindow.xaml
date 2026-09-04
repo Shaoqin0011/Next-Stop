@@ -1,6 +1,7 @@
 <Window x:Class="NextStop.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:NextStop.Wpf.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
@@ -97,7 +98,7 @@
                                     </StackPanel>
                                     <StackPanel Visibility="{Binding UsesMaturityDate, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <TextBlock Style="{StaticResource FieldLabel}">MATURITY DATE</TextBlock>
-                                        <DatePicker Margin="0,7,0,0" SelectedDate="{Binding MaturityDate}" />
+                                        <controls:CenteredDatePicker Margin="0,7,0,0" SelectedDate="{Binding MaturityDate}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Row="4" Grid.ColumnSpan="3">

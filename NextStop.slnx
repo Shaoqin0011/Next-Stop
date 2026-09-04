@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NextStop.Domain/NextStop.Domain.csproj" />
+    <Project Path="src/NextStop.Pricing/NextStop.Pricing.csproj" />
+    <Project Path="src/NextStop.Wpf/NextStop.Wpf.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NextStop.Pricing.Tests/NextStop.Pricing.Tests.csproj" />
+  </Folder>
+</Solution>

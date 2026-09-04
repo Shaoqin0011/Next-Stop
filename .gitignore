@@ -2,9 +2,6 @@
 [Bb]in/
 [Oo]bj/
 
-bin/
-obj/
-
 # Visual Studio and JetBrains user/workspace files
 .vs/
 .idea/

@@ -4,6 +4,7 @@ using NextStop.Pricing.MonteCarlo.Random;
 using NextStop.Pricing.MonteCarlo.Regression;
 using NextStop.Pricing.MonteCarlo.Simulation;
 using NextStop.Pricing.MonteCarlo.Setting;
+using NextStop.Pricing.MonteCarlo.Validation;
 
 public sealed class MonteCarloPricingEngine
 {
@@ -12,6 +13,8 @@ public sealed class MonteCarloPricingEngine
         MarketData market,
         PathMonteCarloSettings settings)
     {
+        PathInputValidator.Validate(option, market, settings);
+
         var randomGenerator = new GaussianRandomGenerator(settings.RandomSeed);
         var pathSimulator = new GeometricBrownianMotionPathSimulator();
         double sumPayoffs = 0.0;
@@ -34,6 +37,8 @@ public sealed class MonteCarloPricingEngine
         MarketData market,
         MonteCarloSettings settings)
     {
+        TerminalPriceInputValidator.Validate(option, market, settings);
+
         var randomGenerator = new GaussianRandomGenerator(settings.RandomSeed);
         var terminalPriceSimulator = new GeometricBrownianMotionSimulator();
 
@@ -61,6 +66,8 @@ public sealed class MonteCarloPricingEngine
         MarketData market,
         PathMonteCarloSettings settings)
     {
+        PathInputValidator.Validate(option, market, settings);
+
         int numberOfPaths = settings.NumberOfPaths;
         int numberOfSteps = settings.NumberOfTimeSteps;
         var randomGenerator = new GaussianRandomGenerator(settings.RandomSeed);

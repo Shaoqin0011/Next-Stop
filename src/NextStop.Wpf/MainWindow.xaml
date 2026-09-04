@@ -38,13 +38,17 @@
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource FieldLabel}">PRICING ENGINE</TextBlock>
                                     <ComboBox Margin="0,7,0,0" ItemsSource="{Binding PricingEngines}" SelectedItem="{Binding SelectedPricingEngine}" />
+                                    <StackPanel Margin="0,14,0,0" Visibility="{Binding IsMonteCarlo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <TextBlock Style="{StaticResource FieldLabel}">METHODOLOGY</TextBlock>
+                                        <ComboBox Margin="0,7,0,0" ItemsSource="{Binding MonteCarloMethodologies}" SelectedItem="{Binding SelectedMonteCarloMethodology}" />
+                                    </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" Visibility="{Binding IsMonteCarlo, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <TextBlock Style="{StaticResource FieldLabel}">SIMULATION PATHS</TextBlock>
                                     <TextBox Margin="0,7,0,0" Text="{Binding NumberOfPathsText, UpdateSourceTrigger=PropertyChanged}" />
                                     <TextBlock Style="{StaticResource HintText}">Fixed seed: 42</TextBlock>
                                 </StackPanel>
-                                <StackPanel Grid.Column="4" Visibility="{Binding IsMonteCarlo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel Grid.Column="4" Visibility="{Binding UsesPathMonteCarlo, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <TextBlock Style="{StaticResource FieldLabel}">TIME STEPS</TextBlock>
                                     <TextBox Margin="0,7,0,0" Text="{Binding NumberOfTimeStepsText, UpdateSourceTrigger=PropertyChanged}" />
                                     <TextBlock Style="{StaticResource HintText}">Per simulated path</TextBlock>

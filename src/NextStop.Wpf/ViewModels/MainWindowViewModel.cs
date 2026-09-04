@@ -16,6 +16,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     private string _selectedExerciseStyle = "European";
     private string _selectedOptionType = "Call";
     private string _selectedPricingEngine = "Black-Scholes";
+    private string _selectedMonteCarloMethodology = "Path";
     private string _spotText = "100";
     private string _strikeText = "100";
     private string _timeToMaturityText = "1";
@@ -43,6 +44,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     public IReadOnlyList<string> ExerciseStyles { get; } = ["European", "American"];
     public IReadOnlyList<string> OptionTypes { get; } = ["Call", "Put"];
     public IReadOnlyList<string> PricingEngines { get; } = ["Black-Scholes", "Monte Carlo"];
+    public IReadOnlyList<string> MonteCarloMethodologies { get; } = ["Path", "Terminal Price"];
     public ICommand PriceCommand { get; }
     public ICommand ResetCommand { get; }
 
@@ -68,6 +70,16 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
+    public string SelectedMonteCarloMethodology
+    {
+        get => _selectedMonteCarloMethodology;
+        set
+        {
+            SetField(ref _selectedMonteCarloMethodology, value);
+            NotifyPricingSelectionChanged();
+        }
+    }
+
     public string SpotText { get => _spotText; set => SetField(ref _spotText, value); }
     public string StrikeText { get => _strikeText; set => SetField(ref _strikeText, value); }
     public string TimeToMaturityText { get => _timeToMaturityText; set => SetField(ref _timeToMaturityText, value); }
@@ -84,9 +96,9 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     public string VegaDisplay { get => _vegaDisplay; private set => SetField(ref _vegaDisplay, value); }
     public string RhoDisplay { get => _rhoDisplay; private set => SetField(ref _rhoDisplay, value); }
     public bool IsMonteCarlo => SelectedPricingEngine == "Monte Carlo";
-    public bool IsAmericanMonteCarlo => IsMonteCarlo && SelectedExerciseStyle == "American";
+    public bool UsesPathMonteCarlo => IsMonteCarlo && SelectedMonteCarloMethodology == "Path";
     public string ResultDescription => IsMonteCarlo
-        ? "Monte Carlo result with a fixed random seed."
+        ? $"Monte Carlo {SelectedMonteCarloMethodology.ToLowerInvariant()} result with a fixed random seed."
         : "Black–Scholes result and analytical Greeks.";
 
     private void CalculatePrice()
@@ -152,6 +164,14 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
         int numberOfPaths = ReadPositiveInteger(NumberOfPathsText, "Simulation paths");
         var engine = new MonteCarloPricingEngine();
+
+        if (!UsesPathMonteCarlo)
+        {
+            var terminalSettings = new MonteCarloSettings(numberOfPaths, randomSeed: 42);
+            SetMonteCarloResult(engine.PriceWithTerminalPrice(option, market, terminalSettings));
+            return;
+        }
+
         var settings = new PathMonteCarloSettings(
             numberOfPaths,
             ReadPositiveInteger(NumberOfTimeStepsText, "Time steps"),
@@ -160,6 +180,11 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
             ? engine.PriceWithPath(option, market, settings)
             : engine.PriceWithPathTerminal(option, market, settings);
 
+        SetMonteCarloResult(price);
+    }
+
+    private void SetMonteCarloResult(double price)
+    {
         PriceDisplay = Format(price);
         DeltaDisplay = GammaDisplay = ThetaDisplay = VegaDisplay = RhoDisplay = "—";
         ErrorMessage = string.Empty;
@@ -170,6 +195,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         SelectedExerciseStyle = "European";
         SelectedOptionType = "Call";
         SelectedPricingEngine = "Black-Scholes";
+        SelectedMonteCarloMethodology = "Path";
         SpotText = StrikeText = "100";
         TimeToMaturityText = "1";
         VolatilityPercentText = "20";
@@ -184,7 +210,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     private void NotifyPricingSelectionChanged()
     {
         OnPropertyChanged(nameof(IsMonteCarlo));
-        OnPropertyChanged(nameof(IsAmericanMonteCarlo));
+        OnPropertyChanged(nameof(UsesPathMonteCarlo));
         OnPropertyChanged(nameof(ResultDescription));
     }
 

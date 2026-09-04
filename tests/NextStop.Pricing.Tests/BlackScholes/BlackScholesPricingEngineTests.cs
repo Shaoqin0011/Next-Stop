@@ -60,6 +60,34 @@ public class BlackScholesPricingEngineTests
         Assert.True(higherSpotPrice < lowerSpotPrice);
     }
 
+    [Fact]
+    public void CallPrice_ShouldSatisfyNoArbitrageBounds()
+    {
+        EuropeanOption option = CreateOption(OptionType.Call);
+        MarketData market = CreateMarket();
+        double discountedSpot = market.Spot * Math.Exp(-market.DividendYield * option.TimeToMaturity);
+        double discountedStrike = option.Strike * Math.Exp(-market.RiskFreeRate * option.TimeToMaturity);
+        double lowerBound = Math.Max(discountedSpot - discountedStrike, 0.0);
+
+        double price = _engine.Price(option, market);
+
+        Assert.InRange(price, lowerBound, discountedSpot);
+    }
+
+    [Fact]
+    public void PutPrice_ShouldSatisfyNoArbitrageBounds()
+    {
+        EuropeanOption option = CreateOption(OptionType.Put);
+        MarketData market = CreateMarket();
+        double discountedSpot = market.Spot * Math.Exp(-market.DividendYield * option.TimeToMaturity);
+        double discountedStrike = option.Strike * Math.Exp(-market.RiskFreeRate * option.TimeToMaturity);
+        double lowerBound = Math.Max(discountedStrike - discountedSpot, 0.0);
+
+        double price = _engine.Price(option, market);
+
+        Assert.InRange(price, lowerBound, discountedStrike);
+    }
+
     private static EuropeanOption CreateOption(OptionType type, double strike = 100.0, double timeToMaturity = 1.0) =>
         new(strike, timeToMaturity, type);
 

@@ -69,10 +69,49 @@ public class LongstaffSchwartzPricingEngineTests
         MarketData market = CreateMarket(volatility: 0.01);
         var settings = new PathMonteCarloSettings(numberOfPaths: 100, numberOfTimeSteps: 10, randomSeed: Seed);
 
-        Exception? exception = Record.Exception(() =>
-            _longstaffSchwartzEngine.PriceWithPath(option, market, settings));
+        double price = _longstaffSchwartzEngine.PriceWithPath(option, market, settings);
 
-        Assert.Null(exception);
+        Assert.InRange(price, 0.0, 0.01);
+    }
+
+    [Fact]
+    public void PriceWithPath_WithFewerItmObservationsThanBasisFunctions_ShouldReturnSafely()
+    {
+        var option = new AmericanOption(strike: 100.0, timeToMaturity: 1.0, OptionType.Put);
+        MarketData market = CreateMarket(spot: 80.0);
+        var settings = new PathMonteCarloSettings(numberOfPaths: 2, numberOfTimeSteps: 3, randomSeed: Seed);
+
+        double price = _longstaffSchwartzEngine.PriceWithPath(option, market, settings);
+
+        Assert.True(double.IsFinite(price));
+        Assert.True(price >= option.Payoff(market.Spot));
+    }
+
+    [Fact]
+    public void DeepInTheMoneyAmericanPut_ShouldHaveClearEarlyExercisePremium()
+    {
+        MarketData market = CreateMarket(spot: 50.0);
+        var americanPut = new AmericanOption(strike: 100.0, timeToMaturity: 1.0, OptionType.Put);
+        var europeanPut = new EuropeanOption(strike: 100.0, timeToMaturity: 1.0, OptionType.Put);
+
+        double americanPrice = _longstaffSchwartzEngine.PriceWithPath(americanPut, market, CreateBenchmarkSettings());
+        double europeanPrice = _blackScholesEngine.Price(europeanPut, market);
+
+        Assert.True(americanPrice > europeanPrice + 1.0);
+    }
+
+    [Fact]
+    public void VeryShortMaturityAmericanPut_ShouldBeCloseToIntrinsicValue()
+    {
+        const double timeToMaturity = 0.00001;
+        MarketData market = CreateMarket(spot: 80.0);
+        var option = new AmericanOption(strike: 100.0, timeToMaturity, OptionType.Put);
+        var settings = new PathMonteCarloSettings(numberOfPaths: 10_000, numberOfTimeSteps: 10, randomSeed: Seed);
+        double intrinsicValue = option.Payoff(market.Spot);
+
+        double price = _longstaffSchwartzEngine.PriceWithPath(option, market, settings);
+
+        Assert.InRange(price, intrinsicValue, intrinsicValue + 0.05);
     }
 
     private static PathMonteCarloSettings CreateBenchmarkSettings() =>

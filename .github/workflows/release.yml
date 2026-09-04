@@ -7,16 +7,20 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-test-publish:
+    name: Build, Test and Publish
     runs-on: windows-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v6
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
@@ -24,10 +28,16 @@ jobs:
         run: dotnet restore NextStop.slnx
 
       - name: Build
-        run: dotnet build NextStop.slnx --configuration Release --no-restore
+        run: >
+          dotnet build NextStop.slnx
+          --configuration Release
+          --no-restore
 
       - name: Test
-        run: dotnet test NextStop.slnx --configuration Release --no-build
+        run: >
+          dotnet test NextStop.slnx
+          --configuration Release
+          --no-build
 
       - name: Publish WPF application
         run: >
@@ -36,14 +46,32 @@ jobs:
           --configuration Release
           --runtime win-x64
           --self-contained false
+          --no-build
           --output .\publish
 
       - name: Create release archive
         shell: pwsh
-        run: Compress-Archive -Path .\publish\* -DestinationPath .\NextStop-win-x64.zip
+        run: |
+          Compress-Archive `
+            -Path .\publish\* `
+            -DestinationPath .\NextStop-win-x64.zip
 
-      - name: Upload release artifact
+      - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: NextStop-win-x64
           path: NextStop-win-x64.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" `
+            ".\NextStop-win-x64.zip" `
+            --title "${{ github.ref_name }}" `
+            --generate-notes `
+            --verify-tag

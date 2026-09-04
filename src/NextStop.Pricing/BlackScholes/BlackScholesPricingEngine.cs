@@ -8,7 +8,7 @@ namespace NextStop.Pricing.BlackScholes;
 public sealed class BlackScholesPricingEngine
 {
     public double Price(
-        EuropeanOption option,
+        Option option,
         MarketData market)
     {
         BlackScholesInputValidator.Validate(option, market);

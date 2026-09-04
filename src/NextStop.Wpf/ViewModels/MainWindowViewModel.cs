@@ -106,21 +106,16 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         try
         {
             var market = new MarketData(
-                spot: ReadPositive(SpotText, "Spot price"),
+                spot: ReadNumber(SpotText, "Spot price"),
                 riskFreeRate: ReadNumber(RiskFreeRatePercentText, "Risk-free rate") / 100.0,
-                volatility: ReadPositive(VolatilityPercentText, "Volatility") / 100.0,
+                volatility: ReadNumber(VolatilityPercentText, "Volatility") / 100.0,
                 dividendYield: ReadNumber(DividendYieldPercentText, "Dividend yield") / 100.0);
 
             Option option = CreateOption();
 
             if (!IsMonteCarlo)
             {
-                if (option is not EuropeanOption europeanOption)
-                {
-                    throw new NotSupportedException("Black-Scholes is available for European options only. Select Monte Carlo for American options.");
-                }
-
-                PriceWithBlackScholes(europeanOption, market);
+                PriceWithBlackScholes(option, market);
                 return;
             }
 
@@ -134,8 +129,8 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
     private Option CreateOption()
     {
-        double strike = ReadPositive(StrikeText, "Strike price");
-        double maturity = ReadPositive(TimeToMaturityText, "Time to maturity");
+        double strike = ReadNumber(StrikeText, "Strike price");
+        double maturity = ReadNumber(TimeToMaturityText, "Time to maturity");
         OptionType type = SelectedOptionType == "Put" ? OptionType.Put : OptionType.Call;
 
         if (SelectedExerciseStyle == "American")
@@ -146,7 +141,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         return new EuropeanOption(strike, maturity, type);
     }
 
-    private void PriceWithBlackScholes(EuropeanOption option, MarketData market)
+    private void PriceWithBlackScholes(Option option, MarketData market)
     {
         double price = new BlackScholesPricingEngine().Price(option, market);
         Greeks greeks = new BlackScholesGreeksCalculator().CalculateAll(option, market);
@@ -162,7 +157,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
     private void PriceWithMonteCarlo(Option option, MarketData market)
     {
-        int numberOfPaths = ReadPositiveInteger(NumberOfPathsText, "Simulation paths");
+        int numberOfPaths = ReadInteger(NumberOfPathsText, "Simulation paths");
         var engine = new MonteCarloPricingEngine();
 
         if (!UsesPathMonteCarlo)
@@ -174,7 +169,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
         var settings = new PathMonteCarloSettings(
             numberOfPaths,
-            ReadPositiveInteger(NumberOfTimeStepsText, "Time steps"),
+            ReadInteger(NumberOfTimeStepsText, "Time steps"),
             randomSeed: 42);
         double price = option is AmericanOption
             ? engine.PriceWithPath(option, market, settings)
@@ -216,25 +211,14 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
     private static string Format(double value) => value.ToString("N4", CultureInfo.CurrentCulture);
 
-    private static double ReadPositive(string value, string name)
+    private static int ReadInteger(string value, string name)
     {
-        double parsed = ReadNumber(value, name);
-        if (parsed <= 0)
-        {
-            throw new ArgumentOutOfRangeException(name, $"{name} must be greater than zero.");
-        }
-
-        return parsed;
-    }
-
-    private static int ReadPositiveInteger(string value, string name)
-    {
-        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.CurrentCulture, out int parsed) && parsed > 0)
+        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.CurrentCulture, out int parsed))
         {
             return parsed;
         }
 
-        throw new ArgumentException($"{name} must be a positive whole number.");
+        throw new ArgumentException($"Enter a valid whole number for {name}.");
     }
 
     private static double ReadNumber(string value, string name)

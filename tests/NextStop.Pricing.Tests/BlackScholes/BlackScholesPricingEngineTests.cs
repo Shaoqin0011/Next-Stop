@@ -9,6 +9,19 @@ public class BlackScholesPricingEngineTests
     private readonly BlackScholesPricingEngine _engine = new();
 
     [Fact]
+    public void NonDividendPayingAmericanCall_ShouldMatchEuropeanCall()
+    {
+        MarketData market = CreateMarket();
+        var americanCall = new AmericanOption(strike: 100.0, timeToMaturity: 1.0, OptionType.Call);
+        var europeanCall = new EuropeanOption(strike: 100.0, timeToMaturity: 1.0, OptionType.Call);
+
+        double americanPrice = _engine.Price(americanCall, market);
+        double europeanPrice = _engine.Price(europeanCall, market);
+
+        Assert.Equal(europeanPrice, americanPrice);
+    }
+
+    [Fact]
     public void CallPrice_ShouldMatchKnownBlackScholesValue()
     {
         double price = _engine.Price(CreateOption(OptionType.Call), CreateMarket());

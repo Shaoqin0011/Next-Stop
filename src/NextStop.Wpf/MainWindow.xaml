@@ -25,7 +25,7 @@
 
             <Border Padding="28" Background="{StaticResource Surface}" BorderBrush="{StaticResource Border}" BorderThickness="1" CornerRadius="6">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel>
+                    <StackPanel Margin="0,0,28,0">
                         <StackPanel>
                             <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}">Inputs</TextBlock>
                             <TextBlock Margin="0,4,0,0" FontSize="13" Foreground="{StaticResource TextSecondary}">Configure the engine, contract, and market assumptions.</TextBlock>
@@ -62,7 +62,13 @@
                             <TextBlock Style="{StaticResource SectionTitle}">2. Option &amp; underlying</TextBlock>
                             <Grid Margin="0,12,0,0">
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="18" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="18" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="18" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource FieldLabel}">EXERCISE STYLE</TextBlock>
                                     <ComboBox Margin="0,7,0,0" ItemsSource="{Binding ExerciseStyles}" SelectedItem="{Binding SelectedExerciseStyle}" />
@@ -72,9 +78,8 @@
                                     <ComboBox Margin="0,7,0,0" ItemsSource="{Binding OptionTypes}" SelectedItem="{Binding SelectedOptionType}" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="4">
-                                    <TextBlock Style="{StaticResource FieldLabel}">TIME TO MATURITY</TextBlock>
-                                    <TextBox Margin="0,7,0,0" Text="{Binding TimeToMaturityText, UpdateSourceTrigger=PropertyChanged}" />
-                                    <TextBlock Style="{StaticResource HintText}">Years</TextBlock>
+                                    <TextBlock Style="{StaticResource FieldLabel}">TIME INPUT TYPE</TextBlock>
+                                    <ComboBox Margin="0,7,0,0" ItemsSource="{Binding TimeInputMethods}" SelectedItem="{Binding SelectedTimeInputMethod}" />
                                 </StackPanel>
                                 <StackPanel Grid.Row="2">
                                     <TextBlock Style="{StaticResource FieldLabel}">SPOT PRICE</TextBlock>
@@ -83,6 +88,29 @@
                                 <StackPanel Grid.Row="2" Grid.Column="2">
                                     <TextBlock Style="{StaticResource FieldLabel}">STRIKE PRICE</TextBlock>
                                     <TextBox Margin="0,7,0,0" Text="{Binding StrikeText, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Grid.Column="4">
+                                    <StackPanel Visibility="{Binding UsesManualTau, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <TextBlock Style="{StaticResource FieldLabel}">TAU</TextBlock>
+                                        <TextBox Margin="0,7,0,0" Text="{Binding TimeToMaturityText, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBlock Style="{StaticResource HintText}">Years</TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Visibility="{Binding UsesMaturityDate, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <TextBlock Style="{StaticResource FieldLabel}">MATURITY DATE</TextBlock>
+                                        <DatePicker Margin="0,7,0,0" SelectedDate="{Binding MaturityDate}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Row="4" Grid.ColumnSpan="3">
+                                    <TextBlock Style="{StaticResource FieldLabel}">LOCAL DATE &amp; TIME</TextBlock>
+                                    <Border Height="38" Margin="0,7,0,0" Padding="10,0" Background="#F8FAFC" BorderBrush="{StaticResource Border}" BorderThickness="1">
+                                        <TextBlock VerticalAlignment="Center" Foreground="{StaticResource TextPrimary}" Text="{Binding LocalDateTimeDisplay}" />
+                                    </Border>
+                                    <TextBlock Style="{StaticResource HintText}">System local time · updates every minute</TextBlock>
+                                </StackPanel>
+                                <StackPanel Grid.Row="4" Grid.Column="4" Visibility="{Binding UsesMaturityDate, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Style="{StaticResource FieldLabel}">MATURITY TIME</TextBlock>
+                                    <TextBox Margin="0,7,0,0" Text="{Binding MaturityTimeText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource HintText}">HH:mm · local time</TextBlock>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

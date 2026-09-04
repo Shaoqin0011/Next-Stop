@@ -39,6 +39,12 @@ jobs:
           --configuration Release
           --no-build
 
+      - name: Restore WPF application for win-x64
+        run: >
+          dotnet restore
+          .\src\NextStop.Wpf\NextStop.Wpf.csproj
+          --runtime win-x64
+
       - name: Publish WPF application
         run: >
           dotnet publish
@@ -46,7 +52,7 @@ jobs:
           --configuration Release
           --runtime win-x64
           --self-contained false
-          --no-build
+          --no-restore
           --output .\publish
 
       - name: Create release archive
